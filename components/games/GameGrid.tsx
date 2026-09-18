@@ -12,6 +12,7 @@ import { GameFormModal } from "./GameFormModal";
 import { GameListView } from "./GameListView";
 import { SearchAndFilters } from "./SearchAndFilters";
 import type { SortOption } from "./sortOptions";
+import { StaleGamesBanner } from "./StaleGamesBanner";
 import { StatusFilterBar } from "./StatusFilterBar";
 
 type ViewMode = "grid" | "list";
@@ -155,6 +156,8 @@ export function GameGrid() {
 
   return (
     <main className="flex flex-1 flex-col gap-5 px-4 py-6 md:px-8 md:py-8 max-w-7xl mx-auto w-full">
+      <StaleGamesBanner games={games} onView={() => setStatusFilter("Stopped")} />
+
       <header className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}

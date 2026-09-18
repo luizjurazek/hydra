@@ -44,6 +44,13 @@ const EMPTY_FORM: FormState = {
   image: "",
 };
 
+function todayFormatted(): string {
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, "0");
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  return `${dd}/${mm}/${today.getFullYear()}`;
+}
+
 function gameToForm(game: Game | null): FormState {
   if (!game) return EMPTY_FORM;
   return {
@@ -171,7 +178,15 @@ export function GameFormModal({ open, game, onClose, onSaved }: GameFormModalPro
             <select
               className={inputClass}
               value={form.status}
-              onChange={(e) => setField("status", e.target.value)}
+              onChange={(e) => {
+                const status = e.target.value;
+                const stampsFinal = status === "Played" || status === "Stopped";
+                setForm((prev) => ({
+                  ...prev,
+                  status,
+                  final: stampsFinal && !prev.final ? todayFormatted() : prev.final,
+                }));
+              }}
             >
               {STATUSES.map((status) => (
                 <option key={status} value={status}>
@@ -247,7 +262,7 @@ export function GameFormModal({ open, game, onClose, onSaved }: GameFormModalPro
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className={labelClass}>Final</label>
+            <label className={labelClass}>Final (ou data que parou)</label>
             <input
               className={inputClass}
               value={form.final}
