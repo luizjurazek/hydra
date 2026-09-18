@@ -44,13 +44,12 @@ export default function LoginPage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo.png"
-            alt=""
-            className="h-12 w-12 mb-1"
+            alt="Hidra"
+            className="h-24 w-24 mb-1"
             onError={(e) => {
               e.currentTarget.style.display = "none";
             }}
           />
-          <h1 className="text-2xl font-semibold">Hidra</h1>
           <p className="text-sm text-foreground-secondary">Entre para gerenciar seu backlog</p>
         </div>
 

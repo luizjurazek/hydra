@@ -160,13 +160,12 @@ export function GameGrid() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo.png"
-            alt=""
-            className="h-8 w-8"
+            alt="Hidra"
+            className="h-14 w-14"
             onError={(e) => {
               e.currentTarget.style.display = "none";
             }}
           />
-          <h1 className="text-2xl font-semibold tracking-tight">Hidra</h1>
         </div>
         <div className="flex items-center gap-2">
           <button
