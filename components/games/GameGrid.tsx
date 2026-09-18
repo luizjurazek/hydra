@@ -1,6 +1,7 @@
 "use client";
 
-import { LogOut, Plus } from "lucide-react";
+import { BarChart3, LogOut, Plus } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import useSWR from "swr";
@@ -171,6 +172,13 @@ export function GameGrid() {
           />
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href="/estatisticas"
+            className="flex items-center gap-1.5 rounded-full px-3 py-2 text-sm text-foreground-secondary hover:bg-white/5 hover:text-foreground transition-colors"
+            aria-label="Estatísticas"
+          >
+            <BarChart3 size={16} />
+          </Link>
           <button
             onClick={openCreate}
             className="flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
