@@ -1,25 +1,23 @@
-import { fetchWithTimeout } from "./http";
-
-const USER_AGENT =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0 Safari/537.36";
-
-const MAIN_STORY_RE = /Main Story[\s\S]{0,500}?([\d½¼¾]+)\s*Hours?/i;
+import { HowLongToBeatService } from "howlongtobeat-ts";
 
 /**
- * HowLongToBeat has no public API — this scrapes its search page HTML for the "Main Story"
- * hours figure. Best-effort only: HLTB can change its markup at any time, so any failure
- * (timeout, non-200, no regex match) falls back to "Indefinido" rather than surfacing an error.
+ * Fallback for when RAWG has no playtime data — mostly console exclusives RAWG's PC-leaning
+ * community under-covers. Uses howlongtobeat-ts, which (unlike a plain HTML scrape) handles
+ * the token HowLongToBeat's client-side search now requires. Returns null rather than throwing
+ * so callers can fall through to their own default.
  */
-export async function fetchHltbTempo(nome: string): Promise<string> {
+export async function fetchHltbTempo(nome: string): Promise<string | null> {
   try {
-    const url = `https://howlongtobeat.com/?q=${encodeURIComponent(nome)}`;
-    const res = await fetchWithTimeout(url, { headers: { "User-Agent": USER_AGENT } });
-    if (!res.ok) return "Indefinido";
+    const service = new HowLongToBeatService();
+    const result = await service.search(nome);
+    if (!result.success) return null;
 
-    const html = await res.text();
-    const match = html.match(MAIN_STORY_RE);
-    return match ? `${match[1]}h` : "Indefinido";
+    const mainTimeSeconds = result.data[0]?.mainTime;
+    if (!mainTimeSeconds) return null;
+
+    const hours = Math.round((mainTimeSeconds / 3600) * 10) / 10;
+    return `${hours}h`;
   } catch {
-    return "Indefinido";
+    return null;
   }
 }

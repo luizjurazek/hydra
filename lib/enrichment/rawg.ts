@@ -4,6 +4,8 @@ export interface RawgResult {
   genero: string;
   ano: string;
   imagem: string;
+  /** Average playtime in hours, as reported by RAWG's user base; 0 when RAWG has no data. */
+  playtime: number;
 }
 
 interface RawgGenre {
@@ -14,6 +16,7 @@ interface RawgGame {
   genres?: RawgGenre[];
   released?: string;
   background_image?: string;
+  playtime?: number;
 }
 
 interface RawgSearchResponse {
@@ -38,8 +41,9 @@ export async function fetchRawg(nome: string): Promise<RawgResult | null> {
       : "";
     const ano = typeof jogo.released === "string" ? jogo.released.split("-")[0] : "";
     const imagem = jogo.background_image ?? "";
+    const playtime = typeof jogo.playtime === "number" ? jogo.playtime : 0;
 
-    return { genero, ano, imagem };
+    return { genero, ano, imagem, playtime };
   } catch {
     return null;
   }

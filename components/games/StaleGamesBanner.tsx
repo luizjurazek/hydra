@@ -26,31 +26,34 @@ function parseDate(value: string): Date | null {
 
 export function StaleGamesBanner({ games, onView }: StaleGamesBannerProps) {
   const [visible, setVisible] = useState(false);
+  // Captured once at mount rather than read inline, so the staleness check below stays pure.
+  const [now] = useState(() => Date.now());
 
   const staleGames = useMemo(() => {
-    const cutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
+    const cutoff = now - STALE_DAYS * 24 * 60 * 60 * 1000;
     return games.filter((g) => {
       if (g.status !== "Stopped") return false;
       const final = parseDate(g.final);
       return final !== null && final.getTime() < cutoff;
     });
-  }, [games]);
+  }, [games, now]);
 
   useEffect(() => {
     if (staleGames.length === 0) return;
 
     try {
       const lastShown = Number(localStorage.getItem(STORAGE_KEY) ?? 0);
-      if (Date.now() - lastShown < REMIND_EVERY_MS) return;
-      localStorage.setItem(STORAGE_KEY, String(Date.now()));
+      if (now - lastShown < REMIND_EVERY_MS) return;
+      localStorage.setItem(STORAGE_KEY, String(now));
     } catch {
       // private browsing, etc. — show once for this session instead of never
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time reminder banner triggered by data becoming available, not a render-time derivation
     setVisible(true);
     const timer = setTimeout(() => setVisible(false), AUTO_HIDE_MS);
     return () => clearTimeout(timer);
-  }, [staleGames.length]);
+  }, [staleGames.length, now]);
 
   return (
     <AnimatePresence>
